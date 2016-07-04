@@ -1,0 +1,113 @@
+/* My style css */
+/* Karla,Exo,Coda,Voces,Droid Sans,Roboto   */
+@import "http://fonts.googleapis.com/css?family=Roboto";
+ 
+body {
+            background-color: #FFFFFF;   
+            font-family: 'Roboto','Arial Narrow',sans-serif;
+            margin-top:60px;
+}
+ 
+/*
+* navbar
+*/
+.navbar {
+	background: #428bca; /* for non-css3 browsers */
+	border-bottom:1px solid #CCCCCC;                
+	/*box-shadow: 0px 5px 10px 0px rgba(204, 204, 204, 0.75);*/
+	padding-right:8px;
+	padding-left:8px;		
+}
+ 
+/* START OF Change the Navbar Colors/Font/Size */
+/* Adjust Menu (red) text color, (Garamond) font-family, (1.5em) font-size  */
+ 
+/* Adjust Menu colors - Normal */
+.navbar .nav > li > a, .navbar .nav > li > a{
+    color: #FFFFFF;
+}
+/* Adjust Menu colors - Hover */
+.navbar .nav > li > a:hover, .navbar .nav > li > a:hover {
+    color: #FFFFFF;  
+    background-color: #004682;     
+}
+/* Adjust Menu colors - Active */
+.navbar .nav > li > a:active, .navbar .nav > li > a:active,
+.navbar .nav > li.current-menu-item > a,
+.navbar .nav > li.current-menu-ancestor > a,
+.navbar .nav > li.current-menu-item > 0,
+.navbar .nav > li.current-menu-ancestor > a {
+    color: #FFFFFF;
+}
+/* Adjust dropdown Menu items (blue) text color, (yellow) shading and (green) border */
+.dropdown-menu > li > a {
+ 
+}
+/* Remove the Hover/Focus Colors  */
+.navbar .nav > li.current-menu-item > a, .navbar .nav > li.current-menu-ancestor > a,
+.navbar .nav > li > a:hover, .navbar .nav > li > a:focus {
+    color: #FFFFFF;
+	background-color: #004682; 
+}
+/* END OF Change the Navbar Colors/Font/Size */
+ 
+.navbar-brand {
+    color: #FFFFFF;
+}
+.navbar-brand:hover{
+    color: #FFFFFF;
+}
+   
+.icon-bar {
+   background-color: #FFFFFF
+}
+/*
+* show menu on hover
+*/
+.dropdown:hover .dropdown-menu {
+    color: #FFFFFF;
+    display: block;
+}
+ 
+/*
+* Main content
+*/
+.main {  
+            background-color: #ffffff;
+}
+ 
+.alert{
+            margin-left: 40px;
+            margin-right: 40px;
+}
+h1{
+    margin-top: 4px;
+    margin-bottom: -8px; 
+    font-size: 22pt;
+    font-weight: bold; 
+    color: #428bca;
+}
+.page-header{
+    margin-top: 0px;
+    margin-bottom: 8px;   
+                
+}
+ 
+.panelValue{
+    font-size:40px;
+    text-align:center;
+    vertical-align:middle;
+    font-weight:bold;
+}
+ 
+.panelValueDate{
+    font-size:25px;
+    text-align:center;
+    vertical-align:middle;
+    font-weight:bold;
+    padding:26px;
+}
+ 
+ .tdright {
+    text-align: right;
+}
