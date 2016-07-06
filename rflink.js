@@ -258,7 +258,7 @@ function processData(telegram) {
 			}		
 			else if (y === "uv")
 			{
-				result = parseInt(rfdata[y], 16);
+				result = parseInt(rfdata[y], 16) /10.0;
 				rfdata[y] = result.toString();						
 			}	
 			else if (y === "lux")
@@ -273,7 +273,7 @@ function processData(telegram) {
 			}
 			else if (y === "rain") // mm
 			{
-				result = parseInt(rfdata[y], 16);
+				result = parseInt(rfdata[y], 16) /10.0;
 				rfdata[y] = result.toString();					
 			}	
 			else if (y === "raintot") // mm 
