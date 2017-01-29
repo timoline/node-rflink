@@ -1,6 +1,6 @@
 {
 	"app_name" : "rflink",
-	"serial_port" : "COM3", 
+	"serial_port" : "/dev/ttyACM0", 
 	"web_port" : 9999,
 	"mqtt_broker" : "mqtt://10.0.0.222",
 	"mqtt_port" : 1883,
@@ -20,7 +20,7 @@
 			"topic": "connected/rflink",
 			"payload": "0",
 			"qos": 0,
-			"retain": false
+			"retain": true
 		},
 		"username": "",
 		"password": "",

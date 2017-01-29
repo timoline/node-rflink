@@ -1,3 +1,4 @@
+"use strict";
 var sp = require('serialport'); 
 var mqtt = require('mqtt');
 var readline = require('readline');
@@ -7,6 +8,7 @@ var app = express();
 var config = require('./config.json');
 
 var mclient,
+	sclient,
     config,
     SerialPort,
     RFLink,
@@ -22,8 +24,8 @@ function getRFLinkCommand (topic,message){
 	//10;Protocol Name;device address,button number;action; 
 
 	// actions/rflink/MiLightv1/F746/01/34BC PAIR
-		
-	tp = topic.split("/");
+	var rflink_id = "10;";	
+	var tp = topic.split("/");
 	//console.log("topic length: " + tp.length);
 	if ((tp.length) == 2){
 		// for receiving version, ping/pong, reboot //2
@@ -32,7 +34,7 @@ function getRFLinkCommand (topic,message){
 		// actions/flink reboot
 		if(message == "version" || message == "ping" || message == "reboot")
 		{
-			command = "10;" + message + ";" ;
+			command = rflink_id + message + ";" ;
 			console.log("Received from mqtt, topic: " + topic);
 			console.log("Received from mqtt, message: " + message);
 			console.log("Command 4: " + command);
@@ -46,7 +48,7 @@ function getRFLinkCommand (topic,message){
 	}		
 	else if ((tp.length) == 4){
 		// actions/rflink/MERTIK/64 UP;	//4		
-		command = "10;" + tp[2] + ";" + tp[3] + ";" + message + ";" ;
+		command = rflink_id + tp[2] + ";" + tp[3] + ";" + message + ";" ;
 		console.log("Received from mqtt, topic: " + topic);
 		console.log("Received from mqtt, message: " + message);
 		console.log("Command 4: " + command);
@@ -55,7 +57,7 @@ function getRFLinkCommand (topic,message){
 	}	
 	else if ((tp.length) == 5){
 		// actions/rflink/Kaku/00004d/1 OFF //5		
-		command = "10;" + tp[2] + ";" + tp[3] + ";" + tp[4] + ";" + message + ";" ;
+		command = rflink_id + tp[2] + ";" + tp[3] + ";" + tp[4] + ";" + message + ";" ;
 		console.log("Received from mqtt, topic: " + topic);
 		console.log("Received from mqtt, message: " + message);
 		console.log("Command 5: " + command);
@@ -64,7 +66,7 @@ function getRFLinkCommand (topic,message){
 	}
 	else if ((tp.length) == 6){
 		// actions/rflink/NewKaku/00c142/1/AAA ON //6		
-		command = "10;" + tp[2] + ";" + tp[3] + ";" + tp[4] + ";" + tp[5] + ";" + message + ";" ;
+		command = rflink_id + tp[2] + ";" + tp[3] + ";" + tp[4] + ";" + tp[5] + ";" + message + ";" ;
 		console.log("Received from mqtt, topic: " + topic);
 		console.log("Received from mqtt, message: " + message);
 		console.log("Command 6: " + command);
@@ -80,7 +82,7 @@ function getRFLinkCommand (topic,message){
 
 //***** MQTT	
 mclient = mqtt.connect(config.mqtt_broker, config.mqtt_port, config.mqtt_options); 
-mclient.publish('connected/' + config.app_name , '1');
+mclient.publish('connected/' + config.app_name , '1', {retain: true});
 
 var connected;
 mclient.on('connect', function () {
@@ -126,22 +128,27 @@ app.get('/json', function(req,res) {
 	res.json(jsondata);
 });
 
+/*
 var rawdata = {};
 app.get('/raw', function(req,res) { 
 	res.send(rawdata);
 });
+*/
 //*****
 
 function RFLink() {
+	/*
 	this.timestamp = 0;
 	this.rflink_id = 0;
 	this.sensor_id = 0;
 	this.name_id = 0;
 	this.device_id = 0;
 	this.rfdata = 0;
+	*/
 }
 
 RFLink.prototype.update = function(data) {
+	var key;
 	jsondata = data;	
 	if(config.mqtt_sendhistorical){
 		mclient.publish(config.mqtt_historicaltopic, JSON.stringify(data));
@@ -172,8 +179,10 @@ function processData(telegram) {
 		name_id,
 		device_id,
 		rfdata = {},
-		rfversion = {},
-		result;
+		result,
+		idx,
+		name,
+		value;
 	
     if(telegram.length > 0) {
 		
@@ -184,8 +193,9 @@ function processData(telegram) {
 		rflink_id = tg[0];
 		sensor_id = tg[1];
 		name_id = (tg[2].toLowerCase().replace(/ /g,"_")).replace(/\//g,"_"); //lowercase, replace spaces and slashes
-		device_id =  tg[3].substr(3);
-
+		//device_id =  tg[3].substr(3);
+		device_id = tg[3].split("=")[1];
+		
 		if (name_id.includes("nodo_radiofrequencylink") )
 		{
 			console.log('Start message, getting RFLink version...');	
@@ -198,18 +208,24 @@ function processData(telegram) {
 			// version info	
 		}		
 
-		
 		for(var i = 4; i < (tg.length)-1;i++)
 		{
-//console.log(tg[i]);
+			/*
 			var arr = tg[i].split("=");
 			
 			for(var a=0 ; a < (arr.length) ; a+=2) 
 			{
 				rfdata[ arr[a].toLowerCase() ] = arr[a+1];
 			}			
+			*/
+			// we don't use split() method since values can have '=' in it
+            idx = tg[i].indexOf("=");
+            name = (tg[i].substring(0, idx)).toLowerCase();
+            value = tg[i].substring(idx + 1, tg[i].length);			
+			rfdata[ name ] = value;
 		}
-				
+		//console.log(rfdata);
+		
 		for(var y in rfdata)
 		{	
 			if (y === "switch")
@@ -445,7 +461,7 @@ function main() {
 	}
 	else
 	{	
-		SerialPort = sp.SerialPort;
+		SerialPort = sp;
 		RFLink = new RFLink();
 
 		sclient = new SerialPort(config.serial_port, {
@@ -461,10 +477,10 @@ function main() {
 			console.log('Received from serial: ' + line);
 			//console.log(line[0]);
 			telegram = line;
-			rawdata = telegram;
+			//rawdata = telegram;
 			if(line[0] === "2") {
 				processData(telegram);
-				telegram.length = 0;
+				//telegram.length = 0;
 			} else {
 				telegram.push(line);
 			}
