@@ -2,7 +2,7 @@
 	"app_name" : "rflink",
 	"serial_port" : "/dev/ttyACM0", 
 	"web_port" : 9999,
-	"mqtt_broker" : "mqtt://10.0.0.222",
+	"mqtt_broker" : "mqtt://10.0.0.25",
 	"mqtt_port" : 1883,
 	"mqtt_topic" : "events/rflink/",
 	"mqtt_torflinktopic" : "actions/rflink/#",
@@ -20,7 +20,7 @@
 			"topic": "connected/rflink",
 			"payload": "0",
 			"qos": 0,
-			"retain": true
+			"retain": false
 		},
 		"username": "",
 		"password": "",

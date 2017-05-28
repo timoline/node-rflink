@@ -82,7 +82,7 @@ function getRFLinkCommand (topic,message){
 
 //***** MQTT	
 mclient = mqtt.connect(config.mqtt_broker, config.mqtt_port, config.mqtt_options); 
-mclient.publish('connected/' + config.app_name , '1', {retain: true});
+mclient.publish('connected/' + config.app_name , '1');
 
 var connected;
 mclient.on('connect', function () {
@@ -188,7 +188,8 @@ function processData(telegram) {
 		
 		var tg = telegram.split(";");
         
-		rfdata.timestamp = Math.round(new Date().getTime()/1000).toString();				
+		//rfdata.timestamp = Math.round(new Date().getTime()/1000).toString();				
+		rfdata.timestamp = new Date().toISOString();				
 		// Process RFLink
 		rflink_id = tg[0];
 		sensor_id = tg[1];
@@ -461,7 +462,7 @@ function main() {
 	}
 	else
 	{	
-		SerialPort = sp;
+		SerialPort = sp.SerialPort;
 		RFLink = new RFLink();
 
 		sclient = new SerialPort(config.serial_port, {

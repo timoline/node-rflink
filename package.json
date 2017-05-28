@@ -1,6 +1,6 @@
 {
   "name": "rflink2mqtt",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "rflink2mqtt",
   "main": "rflink2mqtt.js",
   "scripts": {
@@ -11,8 +11,6 @@
   "dependencies": {
 	"serialport" : "^3.1.2",
     "mqtt" : "^1.10.0",
-	"readline" : "^1.3.0",
-	"fs" : "^0.0.2",
 	"express" : "^4.13.4"
-  },  
+  }
 }
