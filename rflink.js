@@ -111,7 +111,7 @@ mclient.on('message', function (topic, message) {
 
 });
 
-//***** WEBSERVER
+/* **** WEBSERVER
 app.use(express.static(__dirname + '/public'));
 app.get('/index.html', function (req, res) {
 	res.sendFile( __dirname + "/" + "index.html" );
@@ -126,7 +126,7 @@ app.get('/json', function(req,res) {
 	app.set('json spaces', 2);
 	res.json(jsondata);
 });
-
+*/
 /*
 var rawdata = {};
 app.get('/raw', function(req,res) { 
@@ -134,6 +134,23 @@ app.get('/raw', function(req,res) {
 });
 */
 //*****
+
+function publishData(data){	
+	if(data){
+		if(data.rfdata.switch){
+			var RFTopic = config.mqtt_topic + data.name_id + '/' + data.device_id + '/' + data.rfdata.switch + '/';		
+		}
+		else{
+			var RFTopic = config.mqtt_topic + data.name_id + '/' + data.device_id + '/';
+		}
+		
+		for(var key in data.rfdata)
+		{		
+			//console.log("DATA",data.rfdata[key]);	
+			mclient.publish(RFTopic + key, data.rfdata[key], {retain: true});
+		}
+	}		
+}
 
 
 function main() {
@@ -163,26 +180,9 @@ function main() {
 				
 		sclient.on('data', function(line) {
 			console.log('Received from serial: ' + line);
-			//console.log(line[0]);
+			//console.log(line.length);
 
-			var key;
-			var data = parsePacket(line);
-			
-			if(data){
-				if(data.rfdata.switch){
-					var RFTopic = config.mqtt_topic + data.name_id + '/' + data.device_id + '/' + data.rfdata.switch + '/';		
-				}
-				else{
-					var RFTopic = config.mqtt_topic + data.name_id + '/' + data.device_id + '/';
-				}
-				
-				for(key in data.rfdata)
-				{		
-					//console.log("DATA",data.rfdata[key]);	
-					mclient.publish(RFTopic + key, data.rfdata[key], {retain: true});
-				}
-			}
-			
+			publishData(parsePacket(line));
 
 		});
 		
