@@ -13,7 +13,7 @@ function MQTTconnect() {
 		cleanSession: cleansession,
 		onSuccess: onConnect,
 		onFailure: function (message) {
-			$('#status').val("Connection failed: " + message.errorMessage + "Retrying");
+			$('#status').html("Connection failed: " + message.errorMessage + "Retrying");
 			setTimeout(MQTTconnect, reconnectTimeout);
 		}
 	};
@@ -30,15 +30,15 @@ function MQTTconnect() {
 }
 
 function onConnect() {
-	$('#status').val('Connected to ' + host + ':' + port);
+	$('#status').html('Connected to ' + host + ':' + port);
 	// Connection succeeded; subscribe to our topic
 	mqtt.subscribe(topic, {qos: 0});
-	$('#topic').val(topic);
+	$('#topic').html(topic);
 }
 
 function onConnectionLost(response) {
 	setTimeout(MQTTconnect, reconnectTimeout);
-	$('#status').val("connection lost: " + responseObject.errorMessage + ". Reconnecting");
+	$('#status').html("connection lost: " + responseObject.errorMessage + ". Reconnecting");
 
 };
 
