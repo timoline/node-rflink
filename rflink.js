@@ -111,7 +111,7 @@ mclient.on('message', function (topic, message) {
 
 });
 
-/* **** WEBSERVER
+// **** WEBSERVER
 app.use(express.static(__dirname + '/public'));
 app.get('/index.html', function (req, res) {
 	res.sendFile( __dirname + "/" + "index.html" );
@@ -121,13 +121,14 @@ app.listen(config.web_port, function() {
 	console.log('server listening on port ' + config.web_port);
 });	
 
+/*
 var jsondata = {};
 app.get('/json', function(req,res) { 
 	app.set('json spaces', 2);
 	res.json(jsondata);
 });
-*/
-/*
+
+
 var rawdata = {};
 app.get('/raw', function(req,res) { 
 	res.send(rawdata);
@@ -165,8 +166,7 @@ function main() {
 			parsePacket(line);
 		});
 	}
-	else
-	{	
+	else {	
 		SerialPort = sp.SerialPort;
 
 		sclient = new SerialPort(config.serial_port, {
@@ -180,13 +180,9 @@ function main() {
 				
 		sclient.on('data', function(line) {
 			console.log('Received from serial: ' + line);
-			//console.log(line.length);
 
 			publishData(parsePacket(line));
-
-		});
-		
-	}	
-	
+		});		
+	}		
 }
 main();
