@@ -136,27 +136,24 @@ app.get('/raw', function(req,res) {
 */
 //*****
 
-function publishData(data){	
-	if(data){
-		if(data.rfdata.switch){
-			var RFTopic = config.mqtt_topic + data.name_id + '/' + data.device_id + '/' + data.rfdata.switch + '/';		
+function getRFTopic(data) {	
+	var RFTopic;
+	if(data) {
+		if(data.rfdata.switch) {
+			RFTopic = config.mqtt_topic + data.name_id + '/' + data.device_id + '/' + data.rfdata.switch + '/';		
 		}
-		else{
-			var RFTopic = config.mqtt_topic + data.name_id + '/' + data.device_id + '/';
+		else {
+			RFTopic = config.mqtt_topic + data.name_id + '/' + data.device_id + '/';
 		}
 		
-		for(var key in data.rfdata)
-		{		
-			//console.log("DATA",data.rfdata[key]);	
-			mclient.publish(RFTopic + key, data.rfdata[key], {retain: true});
-		}
+		return RFTopic;
 	}		
 }
 
 
 function main() {
      	
-	if(config.serial_port === "TEST"){
+	if(config.serial_port === "TEST") {
 		var lineReader = readline.createInterface({
 		  input: fs.createReadStream('rflink.log')
 		});
@@ -180,8 +177,16 @@ function main() {
 				
 		sclient.on('data', function(line) {
 			console.log('Received from serial: ' + line);
-
-			publishData(parsePacket(line));
+			var parsedPacket = parsePacket(line);
+			
+			if(parsedPacket) {
+				var RFTopic = getRFTopic(parsedPacket);
+				
+				for(var key in parsedPacket.rfdata) {		
+					//console.log("DATA",parsedPacket.rfdata[key]);	
+					mclient.publish(RFTopic + key, parsedPacket.rfdata[key], {retain: true});
+				}
+			}
 		});		
 	}		
 }
